@@ -6,13 +6,17 @@ const overlay = document.getElementById('overlay');
 const content = document.getElementById('content');
 const phraseDiv = document.getElementById('phrase');
 const symbolImg = document.getElementById('symbol');
+const passButton = document.getElementById('pass-button'); // NEW
 
 const startSound = document.getElementById('startSound');
 const bgMusic = document.getElementById('bgMusic');
 
 const phrases = [
-    { text: "La lune n'a cessé de prier", symbol: "assets/symbol1.png" },
-    { text: "L'homme en colère chuta", symbol: "assets/symbol2.png" }
+    { text: "Depuis la nuit des temps, les pêcheurs étaient méprisés par leurs gestes et leurs actions.", symbol: "assets/symbol1.png" },
+    { text: "Pourtant, ils ne cessèrent de prier la lune pour que miséricorde leur soit accordée.", symbol: "assets/symbol2.png" },
+    { text: "Car eux seuls avaient compris l'essence même de l'humain.", symbol: "assets/symbol3.png" },
+    { text: "Ainsi, au fil des siècles ce sont les pêcheurs qui sont devenus sources de prières.", symbol: "assets/symbol4.png" },
+    { text: "Alors priez, priez pour la naissance des 7 pêcheurs et de leurs apôtres, car eux seuls seront votre voie.", symbol: "assets/symbol5.png" }
 ];
 
 let currentIndex = 0;
@@ -61,11 +65,12 @@ async function showPhrase(index, isFirst = false) {
     phraseDiv.textContent = phrases[index].text;
     symbolImg.src = phrases[index].symbol;
 
-    const fadeDuration = isFirst ? 4000 : 1500;
+    const fadeDuration = isFirst ? 4000 : 3000;
     const finalOpacity = 0.9;
 
     if (isFirst) {
         await new Promise(r => setTimeout(r, 2000));
+        passButton.classList.add('visible'); // NEW
     }
 
     await Promise.all([
@@ -79,30 +84,52 @@ async function showPhrase(index, isFirst = false) {
     }, 1000);
 }
 
+function showFinalState() {
+    fadeOut(phraseDiv, 1000);
+    fadeOut(symbolImg, 1000);
+    fadeOut(content, 1000);
+
+    // Disparition du bouton "Passer"
+    passButton.style.transition = 'opacity 0.6s ease';
+    passButton.style.opacity = 0;
+    passButton.style.pointerEvents = 'none';
+    setTimeout(() => {
+        passButton.classList.remove('visible');
+    }, 600);
+
+    // Disparition du fond noir
+    overlay.style.transition = 'opacity 2s ease';
+    overlay.style.opacity = 0;
+
+    // Affichage du widget Discord avec fondu
+    setTimeout(() => {
+        const discordContainer = document.getElementById('discord-widget-container');
+        if (discordContainer) {
+            discordContainer.classList.add('visible');
+        }
+    }, 2000);
+}
+
 function startSite() {
     loadingScreen.classList.add('hidden');
     main.classList.remove('hidden');
 
-    // Setup zoom initial sans transition
     main.style.transform = 'scale(1.5)';
     main.style.transition = 'none';
     overlay.style.opacity = '1';
     overlay.style.transition = 'none';
 
     setTimeout(() => {
-        // Transition zoom 1.5 → 1 en 4s
         main.style.transition = 'transform 4s ease';
         main.style.transform = 'scale(1)';
 
         overlay.style.transition = 'opacity 4s ease';
-        overlay.style.opacity = '0.9';
+        overlay.style.opacity = '0.8'; // CHANGÉ de 0.9 à 0.8
     }, 50);
 
-    // Jouer son souffle au démarrage du zoom
     startSound.volume = 0.6;
     startSound.play().catch(() => { });
-
-    // Après zoom initial fini, lancer contenu + animation zoom en boucle
+    passButton.classList.add('visible');
     setTimeout(() => {
         content.classList.add('visible');
         showPhrase(currentIndex, true);
@@ -110,8 +137,8 @@ function startSite() {
         bgMusic.volume = 0.3;
         bgMusic.play().catch(() => { });
 
-        main.classList.add('looping');
-    }, 4200); // délai > 4s transition zoom initial
+        main.classList.add('zoomed-in');
+    }, 4200);
 }
 
 clickToStart.addEventListener('click', () => {
@@ -122,8 +149,16 @@ clickToStart.addEventListener('click', () => {
 phraseDiv.addEventListener('click', () => {
     if (!canClick) return;
     currentIndex++;
-    if (currentIndex >= phrases.length) currentIndex = 0;
+    if (currentIndex >= phrases.length) {
+        showFinalState(); // dernier écran
+        return;
+    }
     showPhrase(currentIndex);
+});
+
+passButton.addEventListener('click', () => {
+    
+    showFinalState(); // passer directement au fond
 });
 
 simulateLoading();
