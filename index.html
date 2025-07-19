@@ -15,11 +15,31 @@
 </div>
 
 <!-- Contenu principal -->
+<div id="footer-text">Killime server / Song of the Welkin Moon : Hoyoverse</div>
 <div id="main" class="hidden">
   <div id="overlay"></div>
   <div id="content">
     <img id="symbol" src="" alt="Symbole" />
     <div id="phrase"></div>
+  </div>
+</div>
+<div id="main-content" class="hidden">
+  <img id="center-image" src="assets/center.png" alt="Image centrale" />
+  <div id="circle-container">
+  <div class="circle-item-container"><img class="circle-item" src="assets/item1.png" alt="Item 1" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item2.png" alt="Item 2" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item3.png" alt="Item 3" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item4.png" alt="Item 4" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item5.png" alt="Item 5" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item6.png" alt="Item 6" /></div>
+  <div class="circle-item-container"><img class="circle-item" src="assets/item7.png" alt="Item 7" /></div>
+  </div>
+</div>
+<div id="modal" class="hidden">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2 id="modal-title"></h2>
+    <p id="modal-description"></p>
   </div>
 </div>
 <div id="pass-button">Passer</div>
@@ -34,7 +54,7 @@
         return response.json();
       })
       .then(data => {
-        document.getElementById("owner").textContent = data.owner;
+        document.getElementById("owner").textContent = data.Paresse;
       })
       .catch(error => {
         console.error("Erreur lors du fetch :", error);
@@ -42,6 +62,7 @@
       });
   </script>
 <audio id="startSound" src="assets/souffle.mp3" preload="auto"></audio>
+<audio id="appSound" src="assets/appearance.mp3" preload="auto"></audio>
 <audio id="bgMusic" src="assets/ambiance.mp3" preload="auto" loop></audio>
 
 <script src="script.js"></script>

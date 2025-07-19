@@ -49,14 +49,11 @@ body, html {
   border-radius: 4px;
 }
 
-/* 👆 Transition douce pour l'apparition/disparition et le hover */
-
 #pass-button.visible {
-  opacity: 0.25; /* anciennement 1.0 */
+  opacity: 0.25;
   pointer-events: auto;
 }
 
-/* 👇 Hover : éclaircir le fond et changer le curseur */
 #pass-button:hover {
   background: rgba(255, 255, 255, 0.25);
   color: black;
@@ -100,7 +97,7 @@ body, html {
   overflow: hidden;
   opacity: 1;
   transform-origin: center center;
-  transform: scale(1.5);
+  transform: scale(1);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -125,7 +122,7 @@ body, html {
 
 #content {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   opacity: 0;
   transition: opacity 1s ease;
   text-align: center;
@@ -141,16 +138,21 @@ body, html {
   font-size: 2rem;
   opacity: 0;
   transition: opacity 1s ease;
-  cursor: default;
   user-select: none;
   max-width: 700px;
   margin: 0 auto 20px auto;
   color: white;
+  display: block;
+  padding: 20px;
+  pointer-events: none;
+  cursor: default;
+  position: relative;
+  z-index: 10;
 }
 
 #phrase.clickable {
+  pointer-events: auto;
   cursor: pointer;
-  user-select: text;
 }
 
 #symbol {
@@ -161,7 +163,7 @@ body, html {
   transition: opacity 1s ease;
   margin-bottom: 40px;
   user-select: none;
-  pointer-events: none;
+  pointer-events: none !important;
   animation: symbol-bounce 6s ease-in-out infinite;
   will-change: transform;
 }
@@ -174,12 +176,143 @@ body, html {
   opacity: 0;
   transition: opacity 2s ease;
   pointer-events: none;
-  transform: scale(0.85); /* réduction visuelle */
-  filter: brightness(0.85); /* léger assombrissement */
+  transform: scale(0.85);
+  filter: brightness(0.85);
 }
 #discord-widget-container.visible {
-  opacity: 0.9; /* Opacité réduite */
+  opacity: 0.9;
   pointer-events: auto;
+}
+
+#footer-text {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  font-size: 10px;
+  color: #ccc;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  opacity: 0.4;
+  z-index: 1000;
+}
+
+#main-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* ❗ Empêche de bloquer les clics en mode masqué */
+  z-index: 0; /* ✅ Plus bas par défaut */
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.8s ease;
+  transform-origin: center center;
+}
+
+#main-content.hidden {
+  opacity: 0;
+  pointer-events: none; /* ❗ S'assure que rien ne capte les clics */
+  z-index: 0; /* 🔽 Toujours sous le texte */
+}
+
+#main-content.visible {
+  pointer-events: auto;
+  z-index: 100; /* 🔼 Activé seulement à la fin */
+}
+
+#center-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.circle-item-container {
+  display: inline-block;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+#circle-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.circle-item {
+  pointer-events: none;
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 2.5s ease, transform 0.3s ease;
+  object-fit: cover;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.circle-item.activated {
+  pointer-events: auto;
+}
+
+.circle-item:hover {
+  z-index: 20;
+}
+
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  transition: opacity 0.5s ease;
+}
+
+#modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-content {
+  background: #111;
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+  text-align: center;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: #999;
 }
 
 @keyframes background-zoom {
