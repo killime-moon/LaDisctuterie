@@ -221,9 +221,9 @@ function showMainContent() {
     item.style.opacity = '0';
     item.style.transition = 'opacity 2500ms ease';
 
-    const delay = 1000 + i * 800;
+    const delay = 800 + i * 200;
     setTimeout(() => {
-      appSound.volume = 0.5;
+      appSound.volume = 0.0;
       appSound.playbackRate = 3;
       appSound.play().catch(() => { });
       item.style.opacity = '1';
