@@ -221,7 +221,7 @@ function showMainContent() {
     item.style.opacity = '0';
     item.style.transition = 'opacity 2500ms ease';
 
-    const delay = 800 + i * 200;
+    const delay = 800 + i * 350;
     setTimeout(() => {
       appSound.volume = 0.0;
       appSound.playbackRate = 3;
