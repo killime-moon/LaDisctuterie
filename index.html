@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lune Site</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Écran de chargement -->
+<div id="loading-screen">
+  <div id="progress-bar"><div id="progress-bar-inner"></div></div>
+  <div id="click-to-start" class="hidden">Appuyez pour continuer</div>
+</div>
+
+<!-- Contenu principal -->
+<div id="main" class="hidden">
+  <div id="overlay"></div>
+  <div id="content">
+    <img id="symbol" src="" alt="Symbole" />
+    <div id="phrase"></div>
+  </div>
+</div>
+
+<audio id="startSound" src="assets/souffle.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="assets/ambiance.mp3" preload="auto" loop></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
