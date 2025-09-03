@@ -10,7 +10,16 @@
 
 <!-- Écran de chargement -->
 <div id="loading-screen">
-  <div id="progress-bar"><div id="progress-bar-inner"></div></div>
+  <div id="loading-circle">
+  <div class="dot" style="--i: 0"></div>
+  <div class="dot" style="--i: 1"></div>
+  <div class="dot" style="--i: 2"></div>
+  <div class="dot" style="--i: 3"></div>
+  <div class="dot" style="--i: 4"></div>
+  <div class="dot" style="--i: 5"></div>
+  <div class="dot" style="--i: 6"></div>
+  <div class="dot" style="--i: 7"></div>
+  </div>
   <div id="click-to-start" class="hidden">Appuyez pour continuer</div>
 </div>
 
@@ -25,6 +34,7 @@
 </div>
 <div id="main-content" class="hidden">
   <img id="center-image" src="assets/center.png" alt="Image centrale" />
+  <img id="center-moon" src="assets/centermoon.png" alt="Image lune centrale" />
   <div id="circle-container">
   <div class="circle-item-container"><img class="circle-item" src="assets/item1.png" alt="Item 1" /></div>
   <div class="circle-item-container"><img class="circle-item" src="assets/item2.png" alt="Item 2" /></div>
@@ -34,6 +44,10 @@
   <div class="circle-item-container"><img class="circle-item" src="assets/item6.png" alt="Item 6" /></div>
   <div class="circle-item-container"><img class="circle-item" src="assets/item7.png" alt="Item 7" /></div>
   </div>
+</div>
+<div id="sin-page" class="hidden">
+  <div id="sin-background"></div>
+  <div id="sin-message"></div>
 </div>
 <div id="modal" class="hidden">
   <div class="modal-content">
@@ -46,21 +60,13 @@
 <div id="discord-widget-container">
   <iframe src="https://discord.com/widget?id=398546209247068161&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 </div>
-<p id="owner">Chargement...</p>
-  <script>
-    fetch("https://siteapi-2.onrender.com/owner") // remplace par ton vrai lien Render
-      .then(response => {
-        if (!response.ok) throw new Error("Réponse invalide : " + response.status);
-        return response.json();
-      })
-      .then(data => {
-        document.getElementById("owner").textContent = data.Paresse;
-      })
-      .catch(error => {
-        console.error("Erreur lors du fetch :", error);
-        document.getElementById("owner").textContent = "Erreur de chargement.";
-      });
-  </script>
+<div id="ancientmoon-bg" class="hidden">
+  <video id="ancientmoon-video" src="assets/ancientmoon.mp4" autoplay muted loop playsinline></video>
+</div>
+<div id="return-button" class="hidden">
+  <span>⟵ Retour</span>
+</div>
+<audio id="souffle2Sound" src="assets/souffle2.mp3" preload="auto"></audio>
 <audio id="startSound" src="assets/souffle.mp3" preload="auto"></audio>
 <audio id="appSound" src="assets/appearance.mp3" preload="auto"></audio>
 <audio id="bgMusic" src="assets/ambiance.mp3" preload="auto" loop></audio>

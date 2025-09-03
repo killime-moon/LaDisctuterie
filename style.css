@@ -25,6 +25,7 @@ body, html {
   z-index: 1000;
   opacity: 1;
   transition: opacity 1s ease;
+  cursor: pointer;
 }
 
 #loading-screen.hidden {
@@ -59,34 +60,44 @@ body, html {
   color: black;
 }
 
-#progress-bar {
-  width: 60%;
-  height: 8px;
-  background: #333;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 20px;
+#loading-circle {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 60px;
 }
 
-#progress-bar-inner {
-  height: 100%;
-  width: 0%;
-  background: white;
-  transition: width 0.3s ease;
+#loading-circle .dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: rotate(calc(45deg * var(--i))) translate(75px);
+  opacity: 0.2;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+#loading-circle .dot.active {
+  background-color: white;
+  opacity: 1;
 }
 
 #click-to-start {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   color: white;
   opacity: 0;
-  cursor: default;
   transition: opacity 1s ease;
   user-select: none;
+  text-align: center;
+  pointer-events: none;
 }
 
 #click-to-start.visible {
   opacity: 1;
-  cursor: pointer;
 }
 
 #main {
@@ -223,18 +234,51 @@ body, html {
   z-index: 100; /* 🔼 Activé seulement à la fin */
 }
 
+.sin-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 220px;
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+}
+
 #center-image {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 220px;
-  height: 220px;
+  top: 52%;
+  left: 52%;
+  width: 780px;
+  height: 900px;
   border-radius: 50%;
   opacity: 0;
   transition: opacity 2.5s ease;
-  z-index: 10;
+  z-index: 0;
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+#center-moon {
+  position: absolute;
+  top: 52%;
+  left: 52%;
+  width: 205px;
+  height: 240px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 2.5s ease, transform 0.3s ease;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#center-moon:hover {
+  transform: translate(-50%, -50%) scale(1.3);
 }
 
 .circle-item-container {
@@ -268,6 +312,7 @@ body, html {
 
 .circle-item:hover {
   z-index: 20;
+  transform: scale(1.3);
 }
 
 #modal {
@@ -314,6 +359,124 @@ body, html {
 .close-button:hover {
   color: #999;
 }
+
+#ancientmoon-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 2s ease, transform 1.5s ease; /* 🆕 On ajoute transform */
+  transform: scale(2); /* 🆕 Dézoom initial */
+  pointer-events: none;
+}
+
+#ancientmoon-bg video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+#ancientmoon-bg.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#return-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  border: 1px solid white;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95);
+  transition: opacity 1.2s ease, transform 1s ease, background 0.3s ease;
+}
+
+#return-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+#return-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+#return-button.exit-zoom {
+  transform: translateX(-100vw) scale(3);
+  opacity: 0;
+  transition: transform 1.2s ease, opacity 1.2s ease;
+}
+
+#sin-page {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(2); /* effet de dézoom initial */
+  transition: opacity 1.5s ease, transform 1.5s ease;
+}
+
+#sin-page.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1); /* zoom progressif */
+}
+
+#sin-background {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  opacity: 0.25;
+}
+
+#sin-message {
+  color: white;
+  font-size: 1.6rem;
+  padding: 20px;
+  text-align: center;
+  max-width: 80%;
+  z-index: 10;
+  font-style: italic;
+}
+
+#return-sin-button 
+  margin-top: 40px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  z-index: 10;
+  font-size: 1.2rem;
+  transition: background 0.3s ease;
+}
+
+#return-sin-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 
 @keyframes background-zoom {
   0%, 100% { transform: scale(1); }
