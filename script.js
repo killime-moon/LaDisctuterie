@@ -99,19 +99,15 @@ async function showPhrase(index, isFirst = false) {
     const finalOpacity = 0.9;
 
     if (isFirst) {
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 1000));
         passButton.classList.add('visible');
     }
-
+    canClick = true;
+    phraseDiv.classList.add('clickable');
     await Promise.all([
         fadeIn(phraseDiv, fadeDuration, finalOpacity),
         fadeIn(symbolImg, fadeDuration, finalOpacity),
     ]);
-
-    setTimeout(() => {
-        canClick = true;
-        phraseDiv.classList.add('clickable');
-    }, 500);
 }
 
 function showFinalState() {
@@ -230,6 +226,7 @@ function showMainContent() {
     const centerMoon = document.getElementById('center-moon');
     centerMoon.style.opacity = '0';
     centerMoon.style.transition = 'opacity 2500ms ease';
+    centerMoon.style.pointerEvents = 'auto';
     setTimeout(() => {
         centerMoon.style.opacity = '1';
     }, 50); // légèrement après center.png
@@ -396,19 +393,27 @@ function enterSinPage(index) {
         footer.style.opacity = '0';
     }
 
-    // Prépare fond et texte
-    let representative = "(représentant inconnu)";
+    // Prépare fond et représentant
+    let representative = null;
     for (const [key, value] of Object.entries(sinRepresentatives)) {
         if (normalizeString(key) === normalizedTitle) {
-            representative = value;
+            representative = value; // objet { name, avatar }
             break;
         }
     }
 
-    if (representative != "Place vacante") {
+    if (representative && representative.name !== "aucun" && representative.name !== "Place vacante") {
         sinBackground.style.backgroundImage = `url('assets/${sin.title}.png')`;
         sinBackground.style.backgroundColor = 'transparent';
-        sinMessage.textContent = representative;
+
+        sinMessage.innerHTML = `
+            <div class="player-card">
+                <img src="${representative.avatar || "assets/default-avatar.png"}" alt="Avatar">
+                <div class="player-info">
+                    <div class="player-name">${representative.name}</div>
+                </div>
+            </div>
+        `;
     } else {
         sinBackground.style.backgroundImage = 'none';
         sinBackground.style.backgroundColor = 'black';
@@ -427,6 +432,7 @@ function enterSinPage(index) {
         }, 1800);
     }, 1600);
 }
+
 
 
 // Tooltip pour la lune centrale
@@ -568,10 +574,10 @@ fetch("https://siteapi-2.onrender.com/owner")
             const normalizedTitle = normalizeString(sin.title);
 
             // Trouver le représentant
-            let representative = "(représentant inconnu)";
+            let representativeName = "(représentant inconnu)";
             for (const [key, value] of Object.entries(sinRepresentatives)) {
                 if (normalizeString(key) === normalizedTitle) {
-                    representative = value;
+                    representativeName = value.name; // ✅ utiliser name ici
                     break;
                 }
             }
@@ -582,7 +588,7 @@ fetch("https://siteapi-2.onrender.com/owner")
             tooltip.innerHTML = `
                 <strong>${sin.title}</strong><br>
                 ${sin.description}<br><br>
-                <em>Représentant : ${representative}</em>
+                <em>Représentant : ${representativeName}</em>
             `;
             document.body.appendChild(tooltip);
             tooltip.style.display = 'none';
@@ -607,6 +613,8 @@ fetch("https://siteapi-2.onrender.com/owner")
     .catch(err => {
         console.error("Erreur API représentants :", err);
     });
+
+
 
 animateParallax();
 simulateLoading();
