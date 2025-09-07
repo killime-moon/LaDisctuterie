@@ -86,29 +86,38 @@ async function showPhrase(index, isFirst = false) {
     phraseDiv.classList.remove('clickable');
 
     if (!isFirst) {
-        await Promise.all([
-            fadeOut(phraseDiv, 1000),
-            fadeOut(symbolImg, 1000),
-        ]);
+        // fade-out des anciens texte et symbole
+        phraseDiv.style.transition = 'opacity 1000ms ease';
+        symbolImg.style.transition = 'opacity 1000ms ease';
+        phraseDiv.style.opacity = 0;
+        symbolImg.style.opacity = 0;
+
+        await new Promise(r => setTimeout(r, 1000)); // attend la fin du fade-out
     }
 
+    // Met le texte et symbole nouveaux
     phraseDiv.textContent = phrases[index].text;
     symbolImg.src = phrases[index].symbol;
 
-    const fadeDuration = isFirst ? 4000 : 3000;
-    const finalOpacity = 0.9;
+    // Assure qu'ils commencent invisibles
+    phraseDiv.style.opacity = 0;
+    symbolImg.style.opacity = 0;
 
     if (isFirst) {
         await new Promise(r => setTimeout(r, 1000));
         passButton.classList.add('visible');
     }
+
     canClick = true;
     phraseDiv.classList.add('clickable');
-    await Promise.all([
-        fadeIn(phraseDiv, fadeDuration, finalOpacity),
-        fadeIn(symbolImg, fadeDuration, finalOpacity),
-    ]);
+
+    // fade-in avec durées originales
+    phraseDiv.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
+    symbolImg.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
+    phraseDiv.style.opacity = 0.9;
+    symbolImg.style.opacity = 0.9;
 }
+
 
 function showFinalState() {
     fadeOut(phraseDiv, 1000);
