@@ -433,44 +433,85 @@ body, html {
   transition: transform 1.2s ease, opacity 1.2s ease;
 }
 
+/* === SIN PAGE (scrollable, image non interactive, card en overlay) === */
 #sin-page {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
   background: black;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* contenu en haut */
   align-items: center;
   flex-direction: column;
   z-index: 9998;
   opacity: 0;
   pointer-events: none;
-  transform: scale(2); /* effet de dézoom initial */
+  transform: scale(2); /* effet initial */
   transition: opacity 1.5s ease, transform 1.5s ease;
+  overflow-y: auto; /* permet le scroll interne */
+  -webkit-overflow-scrolling: touch;
 }
 
 #sin-page.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: scale(1); /* zoom progressif */
+  transform: scale(1);
 }
 
+/* Le conteneur du fond devient un élément normal qui pousse la page */
 #sin-background {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: -1;
-  opacity: 0.25;
+  position: relative;
+  width: 100%;
+  z-index: 0;
+  display: block;
 }
 
+/* L'image elle-même : pleine largeur, pas interactive, pas draggable */
+#sin-background img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none; /* n'attrape plus les clics */
+}
+
+/* Le message / card est superposé au dessus de l'image */
 #sin-message {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10; /* au-dessus de l'image */
   color: white;
-  font-size: 1.6rem;
-  padding: 20px;
+  font-size: 1.1rem;
+  padding: 250px;
   text-align: center;
-  max-width: 80%;
-  z-index: 10;
+  max-width: 90%;
+  pointer-events: none; /* la card reste cliquable */
+}
+
+/* Empêcher le scroll du body quand on est sur la page du péché */
+.no-scroll {
+  overflow: hidden !important;
+}
+
+#sin-message.vacant {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.2rem;   /* 🔥 plus gros */
+  font-weight: bold;
+  max-width: 90%;
+  line-height: 1.4;
+  text-align: center;
   font-style: italic;
+  color: white;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 #return-sin-button 
@@ -522,6 +563,80 @@ body, html {
     white-space: nowrap;        /* ✅ une seule ligne */
     overflow: hidden;           /* ✅ coupe si trop long */
     text-overflow: ellipsis;    /* ✅ affiche "…" */
+}
+
+#annonces-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 320px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column; /* ✅ empile de haut en bas */
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#annonces-container.visible {
+  opacity: 1;
+}
+
+#annonces-list {
+  flex: 1;
+  overflow-y: auto; /* ✅ scroll ici */
+}
+
+#annonces-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 4px;
+}
+
+.annonce-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.annonce-card:last-child {
+  border-bottom: none;
+}
+
+.annonce-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.annonce-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.annonce-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.annonce-content {
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.4;
+  white-space: pre-wrap;
 }
 
 

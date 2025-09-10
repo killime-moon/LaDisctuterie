@@ -202,7 +202,7 @@ function rotateCircleItems() {
     const centerY = container.offsetHeight / 2;
     const totalItems = items.length;
 
-    rotationAngle += 0.00025; // ⚠️ Plus lent que 0.002
+    rotationAngle += 0.0015; // ⚠️ Plus lent que 0.002
 
     items.forEach((item, index) => {
         const angle = (index / totalItems) * (2 * Math.PI) + rotationAngle;
@@ -239,7 +239,10 @@ function showMainContent() {
     setTimeout(() => {
         centerMoon.style.opacity = '1';
     }, 50); // légèrement après center.png
-
+    loadAnnonces();
+    const annoncesContainer = document.getElementById("annonces-container");
+    annoncesContainer.classList.remove("hidden");
+    setTimeout(() => annoncesContainer.classList.add("visible"), 500);
     items.forEach((item, i) => {
         item.style.opacity = '0';
         item.style.transition = 'opacity 2500ms ease';
@@ -329,7 +332,12 @@ centerMoon.addEventListener('click', () => {
         footer.style.transition = 'opacity 1s ease';
         footer.style.opacity = '0';
     }
-
+    const annoncesContainer = document.getElementById("annonces-container");
+    if (annoncesContainer) {
+        annoncesContainer.style.transition = 'opacity 1s ease';
+        annoncesContainer.style.opacity = '0';
+        annoncesContainer.style.pointerEvents = 'none';
+    }
     // Après la transition, on montre la vidéo
     setTimeout(() => {
         const ancientMoon = document.getElementById('ancientmoon-bg');
@@ -401,7 +409,6 @@ function enterSinPage(index) {
         footer.style.transition = 'opacity 1s ease';
         footer.style.opacity = '0';
     }
-
     // Prépare fond et représentant
     let representative = null;
     for (const [key, value] of Object.entries(sinRepresentatives)) {
@@ -410,11 +417,18 @@ function enterSinPage(index) {
             break;
         }
     }
-
+    const annoncesContainer = document.getElementById("annonces-container");
+    if (annoncesContainer) {
+        annoncesContainer.style.transition = 'opacity 1s ease';
+        annoncesContainer.style.opacity = '0';
+        annoncesContainer.style.pointerEvents = 'none';
+    }
     if (representative && representative.name !== "aucun" && representative.name !== "Place vacante") {
-        sinBackground.style.backgroundImage = `url('assets/${sin.title}.png')`;
+        // Insère une <img> : elle prendra sa hauteur réelle et poussera le scroll
+        sinBackground.innerHTML = `<img id="sin-bg-img" src="assets/${sin.title}.png" alt="${sin.title}" draggable="false">`;
         sinBackground.style.backgroundColor = 'transparent';
-
+        sinMessage.style.pointerEvents = 'auto';
+        sinMessage.className = ''; // reset la classe
         sinMessage.innerHTML = `
             <div class="player-card">
                 <img src="${representative.avatar || "assets/default-avatar.png"}" alt="Avatar">
@@ -423,13 +437,31 @@ function enterSinPage(index) {
                 </div>
             </div>
         `;
+
+        // sécurité : désactive le drag et les events sur l'image
+        const bgImg = sinBackground.querySelector('img');
+        if (bgImg) {
+            bgImg.addEventListener('dragstart', e => e.preventDefault());
+            bgImg.style.pointerEvents = 'none';
+            bgImg.style.userSelect = 'none';
+            bgImg.style.display = 'block';
+            bgImg.style.width = '100%';
+            bgImg.style.height = 'auto';
+        }
     } else {
-        sinBackground.style.backgroundImage = 'none';
+        // Pas de représentant
+        sinBackground.innerHTML = '';
         sinBackground.style.backgroundColor = 'black';
+        a = true;
+        sinMessage.className = 'vacant'; // ajoute la classe spéciale
+        sinMessage.style.pointerEvents = 'auto';
         sinMessage.textContent = "La lune a cessé d’émettre depuis des millénaires, pourtant son éternel souverain ne s’est pas encore dévoilé.";
     }
 
-    // Affichage progressif
+    // Empêche le scroll du body (on scrollera à l'intérieur de #sin-page)
+    document.body.classList.add('no-scroll');
+
+    // Affichage progressif (comme avant)
     setTimeout(() => {
         sinPage.classList.add('visible');
         sinPage.style.opacity = '1';
@@ -441,6 +473,7 @@ function enterSinPage(index) {
         }, 1800);
     }, 1600);
 }
+
 
 
 
@@ -552,7 +585,7 @@ returnButton.addEventListener('click', () => {
             discord.style.opacity = '0.9';
             discord.style.pointerEvents = 'auto';
         }
-
+    
         // Footer
         if (footer) {
             footer.style.opacity = '0.4';
@@ -562,6 +595,20 @@ returnButton.addEventListener('click', () => {
         tooltipEnabled = true;
         hasEnteredAncientMoon = false;
         mainContentActive = true;
+        document.body.classList.remove('no-scroll');
+        const sinBg = document.getElementById('sin-background');
+        const sinMsg = document.getElementById('sin-message');
+        sinMsg.style.pointerEvents = 'none';
+        if (sinBg) sinBg.innerHTML = '';
+        if (sinMsg) sinMsg.innerHTML = '';
+        const annoncesContainer = document.getElementById("annonces-container");
+        if (annoncesContainer) {
+            annoncesContainer.classList.remove("hidden");
+            setTimeout(() => {
+                annoncesContainer.style.opacity = '1';
+                annoncesContainer.style.pointerEvents = 'auto';
+            }, 600);
+        }
     }, 1300);
 });
 
@@ -622,8 +669,35 @@ fetch("https://siteapi-2.onrender.com/owner")
     .catch(err => {
         console.error("Erreur API représentants :", err);
     });
+// === ANNONCES ===
+function loadAnnonces() {
+    fetch("https://siteapi-2.onrender.com/annonces")
+        .then(res => res.json())
+        .then(data => {
+            const annoncesList = document.getElementById("annonces-list");
+            annoncesList.innerHTML = "";
+
+            if (data.annonces && data.annonces.length > 0) {
+                data.annonces.forEach(a => {
+                    const card = document.createElement("div");
+                    card.className = "annonce-card";
+                    card.innerHTML = `
+            <img class="annonce-avatar" src="${a.author_avatar || "assets/default-avatar.png"}" alt="avatar">
+            <div class="annonce-body">
+              <div class="annonce-name">${a.author_name}</div>
+              <div class="annonce-content">${a.content || ""}</div>
+            </div>
+          `;
+                    annoncesList.appendChild(card);
+                });
+            }
+        })
+        .catch(err => console.error("Erreur API annonces :", err));
+}
 
 
+// Charger les annonces après affichage du contenu principal
+setTimeout(loadAnnonces, 6000);
 
 animateParallax();
 simulateLoading();
