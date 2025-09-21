@@ -198,7 +198,7 @@ body, html {
   right: 10px;
   z-index: 10;
   opacity: 0;
-  transition: opacity 2s ease;
+  transition: opacity 2.5s ease;
   pointer-events: none;
   transform: scale(0.85);
   filter: brightness(0.85);
@@ -569,8 +569,8 @@ body, html {
   position: fixed;
   top: 20px;
   left: 20px;
-  width: 320px;
-  max-height: 400px;
+  width: 370px;
+  max-height: 430px;
   background: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
@@ -579,7 +579,7 @@ body, html {
   flex-direction: column; /* ✅ empile de haut en bas */
   z-index: 200;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 2.5s ease;
 }
 
 #annonces-container.visible {
@@ -597,7 +597,9 @@ body, html {
   margin-bottom: 8px;
   color: #fff;
   border-bottom: 1px solid rgba(255,255,255,0.2);
-  padding-bottom: 4px;
+  padding-bottom: 9px;
+  text-align: center;
+  pointer-events: none;
 }
 
 .annonce-card {
@@ -607,6 +609,7 @@ body, html {
   margin-top: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+  pointer-events: none;
 }
 
 .annonce-card:last-child {
@@ -639,6 +642,78 @@ body, html {
   white-space: pre-wrap;
 }
 
+/* ---------- Classement widget (même taille que annonces) ---------- */
+#classement-widget {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 370px;        /* même largeur que annonces */
+  max-height: 430px;   /* même hauteur max que annonces */
+  height: 350px;       /* optionnel : fixe exactement la hauteur */
+  background: rgba(0,0,0,0.72);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  z-index: 400;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#classement-widget.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Titre + nav */
+#classement-title { font-weight:700; font-size:1.1rem; color:#fff; margin-bottom:9px; text-align: center; }
+#classement-nav { display:flex; gap:8px; margin-bottom:6px; justify-content:center; }
+#classement-nav button { 
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.24s ease, transform 0.12s ease;
+}
+#classement-nav button:hover { background: rgba(103, 103, 103, 0.361); transform: translateY(-2px); }
+
+/* zone scroll */
+#classement-container { overflow-y: auto; flex: 1; padding-right: 6px; }
+
+/* chaque ligne du classement */
+#classement-widget .classement-card {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* NOM DU PÉCHÉ - plus visible mais pas énorme */
+#classement-widget .classement-card .peche-name {
+  font-weight:700;
+  color:#fff;
+  font-size: 1rem; /* <- change ici si tu veux plus/pas trop */
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* nombre */
+#classement-widget .classement-card .peche-count {
+  color:#b5b5b5;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
 
 @keyframes background-zoom {
   0%, 100% { transform: scale(1); }
@@ -649,3 +724,26 @@ body, html {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+
+
+
+
+#audio-visualizer {
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 150px;
+  z-index: 50;
+  pointer-events: none;
+  background: transparent;
+
+  opacity: 0;                  /* caché par défaut */
+  transition: opacity 2.5s ease; /* fondu doux */
+}
+
+#audio-visualizer.visible {
+  opacity: 0.6; /* barre blanche légèrement transparente */
+}
+

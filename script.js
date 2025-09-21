@@ -62,7 +62,7 @@ function simulateLoading() {
                 clickToStart.classList.remove('hidden');
             }, 500);
         }
-    }, 130); // 0.3s par point → 8 points = 2.4s total
+    }, 80); // 0.3s par point → 8 points = 2.4s total
 }
 
 function fadeOut(element, duration = 1000) {
@@ -240,9 +240,17 @@ function showMainContent() {
         centerMoon.style.opacity = '1';
     }, 50); // légèrement après center.png
     loadAnnonces();
+    loadClassement();
     const annoncesContainer = document.getElementById("annonces-container");
     annoncesContainer.classList.remove("hidden");
     setTimeout(() => annoncesContainer.classList.add("visible"), 500);
+    if (classementWidget) {
+         classementWidget.classList.remove("hidden");
+        // petit délai pour déclencher la transition CSS
+         setTimeout(() => classementWidget.classList.add("visible"), 500);
+    }
+    const visualizer = document.getElementById("audio-visualizer");
+    setTimeout(() => visualizer.classList.add("visible"), 500);
     items.forEach((item, i) => {
         item.style.opacity = '0';
         item.style.transition = 'opacity 2500ms ease';
@@ -338,6 +346,18 @@ centerMoon.addEventListener('click', () => {
         annoncesContainer.style.opacity = '0';
         annoncesContainer.style.pointerEvents = 'none';
     }
+    if (classementWidget) {
+         classementWidget.style.transition = 'opacity 1s ease';
+         classementWidget.style.opacity = '0';
+          classementWidget.style.pointerEvents = 'none';
+         classementWidget.classList.remove("visible");
+    } 
+    const visualizer = document.getElementById("audio-visualizer");
+    if (visualizer) {
+        visualizer.style.transition = "opacity 1s ease";
+        visualizer.style.opacity = "0";
+        visualizer.style.pointerEvents = "none"; // si vous ne voulez pas de clics
+    }  
     // Après la transition, on montre la vidéo
     setTimeout(() => {
         const ancientMoon = document.getElementById('ancientmoon-bg');
@@ -422,6 +442,18 @@ function enterSinPage(index) {
         annoncesContainer.style.transition = 'opacity 1s ease';
         annoncesContainer.style.opacity = '0';
         annoncesContainer.style.pointerEvents = 'none';
+    }
+    if (classementWidget) {
+         classementWidget.style.transition = 'opacity 1s ease';
+         classementWidget.style.opacity = '0';
+          classementWidget.style.pointerEvents = 'none';
+         classementWidget.classList.remove("visible");
+    }
+    const visualizer = document.getElementById("audio-visualizer");
+    if (visualizer) {
+        visualizer.style.transition = "opacity 1s ease";
+        visualizer.style.opacity = "0";
+        visualizer.style.pointerEvents = "none"; // si vous ne voulez pas de clics
     }
     if (representative && representative.name !== "aucun" && representative.name !== "Place vacante") {
         // Insère une <img> : elle prendra sa hauteur réelle et poussera le scroll
@@ -585,7 +617,7 @@ returnButton.addEventListener('click', () => {
             discord.style.opacity = '0.9';
             discord.style.pointerEvents = 'auto';
         }
-    
+
         // Footer
         if (footer) {
             footer.style.opacity = '0.4';
@@ -609,6 +641,20 @@ returnButton.addEventListener('click', () => {
                 annoncesContainer.style.pointerEvents = 'auto';
             }, 600);
         }
+        if (classementWidget) {
+            classementWidget.classList.remove('hidden');
+            setTimeout(() => {
+                 classementWidget.style.opacity = '1';
+                 classementWidget.style.pointerEvents = 'auto';
+                 classementWidget.classList.add('visible');
+             }, 600);
+        }
+        const visualizer = document.getElementById("audio-visualizer");
+visualizer.classList.remove("hidden");
+
+setTimeout(() => {
+    visualizer.style.opacity = "1";
+}, 600);
     }, 1300);
 });
 
@@ -694,11 +740,198 @@ function loadAnnonces() {
         })
         .catch(err => console.error("Erreur API annonces :", err));
 }
+// Classement
+async function loadClassement() {
+  try {
+    const res = await fetch("https://siteapi-2.onrender.com/classement");
+    if (!res.ok) throw new Error("Status " + res.status);
+    const data = await res.json();
+
+    const container = document.getElementById("classement-container");
+    if (!container) return;
+    container.innerHTML = ""; // reset
+
+    const list = data.ClassementPeche || [];
+    if (list.length === 0) {
+      container.innerHTML = `<div style="padding:12px;color:#bbb">Aucun classement disponible.</div>`;
+      return;
+    }
+
+    // Création des cartes
+    list.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "classement-card";
+
+      // contenu : nom à gauche (prend la largeur), compte à droite
+      card.innerHTML = `
+        <span class="peche-name">${index + 1}. ${escapeHtml(item.peche)}</span>
+        <span class="peche-count">${Number(item.count) || 0} membres</span>
+      `;
+      container.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("[Classement] Erreur:", err);
+    const container = document.getElementById("classement-container");
+    if (container) container.innerHTML = `<div style="padding:12px;color:#c66">Erreur chargement classement</div>`;
+  }
+}
+
+async function loadClassementJeux() {
+  try {
+    const res = await fetch("https://siteapi-2.onrender.com/classement");
+    if (!res.ok) throw new Error("Status " + res.status);
+    const data = await res.json();
+
+    const container = document.getElementById("classement-container");
+    if (!container) return;
+    container.innerHTML = ""; // reset
+
+    const list = data.ClassementJeux || [];
+    if (list.length === 0) {
+      container.innerHTML = `<div style="padding:12px;color:#bbb">Aucun classement disponible.</div>`;
+      return;
+    }
+
+    // Création des cartes
+    list.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "classement-card";
+
+      card.innerHTML = `
+        <span class="peche-name">${index + 1}. ${escapeHtml(item.jeu)}</span>
+        <span class="peche-count">${Number(item.count) || 0} joueurs</span>
+      `;
+      container.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("[Classement Jeux] Erreur:", err);
+    const container = document.getElementById("classement-container");
+    if (container) container.innerHTML = `<div style="padding:12px;color:#c66">Erreur chargement classement</div>`;
+  }
+}
+
+
+// util pour échapper du texte venant de l'API (sécurité basique)
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// --- INITIALISATION WIDGET Classement ---
+const classementWidget = document.getElementById("classement-widget");
+const btnPeches = document.getElementById("btn-classement-peches");
+const btnJeux = document.getElementById("btn-classement-jeux");
+
+if (btnJeux) {
+  btnJeux.addEventListener("click", () => {
+    loadClassementJeux();
+    document.querySelectorAll("#classement-nav button").forEach(b => b.classList.remove("active"));
+    btnJeux.classList.add("active");
+  });
+}
+
+if (btnPeches) {
+  btnPeches.addEventListener("click", () => {
+    loadClassement();
+    document.querySelectorAll("#classement-nav button").forEach(b => b.classList.remove("active"));
+    btnPeches.classList.add("active");
+  });
+}
+
+
+// --- Gestion bouton nav-bar ---
+document.getElementById("btn-classement-peches").addEventListener("click", () => {
+  // Pour l’instant un seul onglet => juste recharger
+  loadClassement();
+
+  // reset les boutons de la mini nav-bar
+  document.querySelectorAll("#classement-page .flex button").forEach(btn => btn.classList.remove("active"));
+  document.getElementById("btn-classement-peches").classList.add("active");
+});
 
 
 // Charger les annonces après affichage du contenu principal
-setTimeout(loadAnnonces, 6000);
+setTimeout(() => { loadAnnonces(); loadClassement(); }, 6000);
 
 animateParallax();
 simulateLoading();
 rotateCircleItems();
+
+
+
+
+
+
+
+
+
+
+// === AUDIO VISUALIZER ===
+const audio = bgMusic
+const canvas = document.getElementById("audio-visualizer");
+const ctx = canvas.getContext("2d");
+
+// Resize dynamique
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Web Audio API
+let audioCtx, analyser, source;
+
+function initAudioVisualizer() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+    } else {
+        // si le contexte existe déjà, juste le reprendre
+        if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+    }
+}
+
+// Dessin
+function draw() {
+    if (!analyser) return;
+    requestAnimationFrame(draw);
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = (canvas.width / bufferLength) * 2.5;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i] / 2;
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+    }
+}
+
+// Lancer après interaction utilisateur
+document.body.addEventListener("click", () => {
+    initAudioVisualizer();
+    draw();
+});
+
+
