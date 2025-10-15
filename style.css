@@ -5,6 +5,13 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'Amanda';
+  src: url('assets/amanda.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body, html {
   width: 100%;
   height: 100%;
@@ -60,10 +67,11 @@ body, html {
   color: black;
 }
 
+/* === CERCLE DE CHARGEMENT AVEC LOGO CENTRAL === */
 #loading-circle {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 650px;   /* 🔁 élargi pour bien entourer ton logo */
+  height: 750px;
   margin-bottom: 60px;
 }
 
@@ -71,12 +79,12 @@ body, html {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px;
-  background-color: rgba(255, 255, 255, 0.1);
+  width: 40px;    /* 🔁 agrandis les points */
+  height: 40px;
+  margin: -20px;
+  background-color: rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  transform: rotate(calc(45deg * var(--i))) translate(75px);
+  transform: rotate(calc(45deg * var(--i))) translate(380px); /* 🔁 rayon plus grand */
   opacity: 0.2;
   transition: background-color 0.3s ease, opacity 0.3s ease;
 }
@@ -85,6 +93,22 @@ body, html {
   background-color: white;
   opacity: 1;
 }
+
+/* === LOGO CENTRAL === */
+#moonlab-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;  /* 💡 dimensions demandées */
+  height: 700px;
+  object-fit: contain;
+  opacity: 0.9;
+  user-select: none;
+  pointer-events: none;
+  animation: logo-pulse 4s ease-in-out infinite;
+}
+
 
 #click-to-start {
   font-size: 1.6rem;
@@ -180,8 +204,7 @@ body, html {
 }
 
 #symbol {
-  width: 100px;
-  height: 100px;
+  height: 300px;
   object-fit: contain;
   opacity: 0;
   transition: opacity 1s ease;
@@ -399,6 +422,49 @@ body, html {
   pointer-events: auto;
 }
 
+#ancientmoon-overlay {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  font-family: 'Amanda', serif;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 2s ease;
+  width: 35%;
+  line-height: 1.6;
+  background-color: #00000050;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#ancientmoon-overlay.visible {
+  opacity: 1;
+}
+
+#ancientmoon-overlay h2 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 15px rgba(255,255,255,0.8);
+  animation: title-glow 3s ease-in-out infinite;
+}
+
+#ancientmoon-overlay p {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+  animation: fadeText 4s ease-in-out infinite alternate;
+}
+
+@keyframes fadeText {
+  0% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+
 #return-button {
   position: fixed;
   bottom: 20px;
@@ -464,8 +530,9 @@ body, html {
 #sin-background {
   position: relative;
   width: 100%;
+  min-height: 100vh;
+  background-size: cover;
   z-index: 0;
-  display: block;
 }
 
 /* L'image elle-même : pleine largeur, pas interactive, pas draggable */
@@ -480,18 +547,20 @@ body, html {
 
 /* Le message / card est superposé au dessus de l'image */
 #sin-message {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10; /* au-dessus de l'image */
+  position: relative;   /* ✅ reste dans le flux */
+  margin: 20px auto 0;  /* espace sous le titre */
+  z-index: 10;
   color: white;
   font-size: 1.1rem;
-  padding: 250px;
   text-align: center;
   max-width: 90%;
-  pointer-events: none; /* la card reste cliquable */
+  padding: 0;           /* ❌ enlever le gros padding */
+  pointer-events: auto; /* garder clics sur la carte */
+  display: flex;
+  justify-content: center;
 }
+
+
 
 /* Empêcher le scroll du body quand on est sur la page du péché */
 .no-scroll {
@@ -499,22 +568,20 @@ body, html {
 }
 
 #sin-message.vacant {
-  position: absolute;
+  position: fixed;              /* ✅ se centre par rapport à la fenêtre */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 2.2rem;   /* 🔥 plus gros */
+  font-size: 2.2rem;
   font-weight: bold;
   max-width: 90%;
   line-height: 1.4;
   text-align: center;
   font-style: italic;
   color: white;
-  z-index: 10;
-  pointer-events: auto;
 }
 
-#return-sin-button 
+#return-sin-button {
   margin-top: 40px;
   padding: 10px 20px;
   background: rgba(255, 255, 255, 0.1);
@@ -532,15 +599,24 @@ body, html {
 }
 
 .player-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 12px;
-    padding: 10px 15px;
-    width: 240px;          /* ✅ largeur fixe */
-    max-width: 240px;      /* ✅ empêche l’expansion */
-    min-width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 10px 15px;
+  width: 240px;
+  max-width: 240px;
+  min-width: 240px;
+  box-shadow: 0 0 12px rgba(255,255,255,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease; /* ✅ transition */
+}
+
+.player-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.9),  /* doré */
+    0 0 30px rgba(255, 255, 255, 0.6); /* violet mystique */
 }
 
 .player-card img {
@@ -714,6 +790,310 @@ body, html {
   flex-shrink: 0;
 }
 
+/* Sections Pécheur + Apôtres */
+.sin-section {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  z-index: 20;
+}
+
+.sin-section.hidden {
+  display: none;
+}
+
+.section-title {
+  font-family: 'Amanda', serif; /* ✅ Amanda en priorité */
+  font-size: 2.6rem;            /* tu peux ajuster */
+  font-weight: normal;          /* Amanda n’a sans doute pas de bold */
+  margin-bottom: 30px;
+  color: #ffd700;
+  text-shadow: 
+      0 0 8px rgba(255, 215, 0, 0.8),
+      0 0 16px rgba(186, 85, 211, 0.6);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: title-glow 3s ease-in-out infinite;
+}
+
+
+@keyframes title-glow {
+  0%, 100% { text-shadow: 
+      0 0 8px rgba(255, 215, 0, 0.8),
+      0 0 16px rgba(186, 85, 211, 0.6); }
+  50% { text-shadow: 
+      0 0 15px rgba(255, 255, 255, 1),
+      0 0 25px rgba(186, 85, 211, 0.9); }
+}
+
+/* Apôtres */
+#apotre-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.apotre-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 14px;
+  padding: 10px 15px;
+  width: 240px;
+  box-shadow: 0 0 12px rgba(255,255,255,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.apotre-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.9),  /* doré */
+    0 0 30px rgba(255, 255, 255, 0.6); /* violet mystique */
+}
+
+.apotre-card img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.apotre-name {
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sin-overlay {
+  position: absolute;   /* superposé au fond */
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 80px 20px 40px;
+  z-index: 10;          /* 🔼 au-dessus du fond */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+#membres-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 20px;
+  align-items: end;
+}
+
+/* === CARTE DE MEMBRE (mise à jour) === */
+.member-hover-card {
+  position: fixed;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  width: 280px;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 0 12px rgba(255,255,255,0.15);
+  transition: opacity 0.15s ease;
+}
+
+.member-hover-card.visible {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 1;
+}
+
+.member-hover-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-hover-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.member-hover-card .name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.member-hover-card .realname {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.member-hover-card .roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.member-hover-card .role {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  color: #ddd;
+  white-space: nowrap;
+}
+
+/* === BARRE DE RECHERCHE FLOTTANTE (v2 corrigée) === */
+#search-container {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 10px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+  width: 420px;
+}
+
+#search-container.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+}
+
+#search-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  text-align: left;
+  color: black;
+  outline: none;
+  font-weight: bold;
+  padding: 4px;
+}
+
+/* === Suggestions avec avatar et scroll === */
+#suggestions {
+  margin-top: 8px;
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  max-height: 60vh; /* ✅ limite raisonnable */
+  overflow-y: auto; /* ✅ scroll activé si trop d'éléments */
+  -webkit-overflow-scrolling: touch;
+}
+
+#suggestions.hidden {
+  display: none;
+}
+
+/* === ITEM DE SUGGESTION === */
+.suggestion-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: black;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background 0.2s ease;
+  flex-direction: column;
+}
+
+.suggestion-item:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Avatar */
+.suggestion-avatar {
+  float: left;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #ddd;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Partie texte */
+.suggestion-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Ligne principale : pseudo à gauche / vrai nom à droite */
+.suggestion-header {
+  display: flex;
+  width: 100%;
+}
+.suggestion-header div{
+  margin-left: 2%;
+  margin-top: 2.5px;
+}
+
+.suggestion-name {
+  font-weight: bold;
+  color: #000;
+  width: 100%;
+}
+
+.suggestion-realname {
+  font-size: 0.8rem;
+  color: #666;
+  width: 100%;
+}
+
+/* Ligne des rôles */
+.suggestion-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.suggestion-role {
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+
+
+
 
 @keyframes background-zoom {
   0%, 100% { transform: scale(1); }
@@ -747,3 +1127,110 @@ body, html {
   opacity: 0.6; /* barre blanche légèrement transparente */
 }
 
+
+/* === PAGE MEMBRE ASTRAL LUNE === */
+#profile-page {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: black url('assets/stars.jpg') center center / cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  z-index: 5;
+  text-align: center;
+  overflow: hidden;
+}
+
+.profile-card-astral {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px 60px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15),
+              0 0 60px rgba(186, 85, 211, 0.4);
+  animation: fadeIn 2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 30px rgba(255,255,255,0.2);
+}
+
+.profile-name {
+  font-family: 'Amanda', serif;
+  font-size: 2.8rem;
+  color: #ffd700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(186, 85, 211, 0.6);
+}
+
+.profile-realname {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-top: -10px;
+}
+
+.profile-roles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.role-tag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: white;
+  transition: background 0.3s ease;
+}
+
+.role-tag:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.highlight {
+  color: #ffd700; /* doré brillant */
+  font-weight: bold;
+  display: inline;         /* ✅ ne casse pas la ligne */
+}
+
+.suggestion-name,
+.suggestion-realname{
+  display: flex;
+  white-space: pre-wrap;  /* garde les espaces naturels */
+  word-break: keep-all;   /* évite les coupures bizarres */
+  flex-direction: row;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 1200px) {
+  #moonlab-logo {
+    width: 70vw;
+    height: auto;
+  }
+  #loading-circle {
+    width: 70vw;
+    height: 70vw;
+  }
+  #loading-circle .dot {
+    transform: rotate(calc(45deg * var(--i))) translate(30vw);
+  }
+}

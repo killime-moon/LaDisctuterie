@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Moon</title>
+<title>La Discuterie</title>
 <link rel="stylesheet" href="style.css" />
 <link rel="icon" type="image/x-icon" href="assets/centermoon.png">
 </head>
@@ -12,14 +12,15 @@
 <!-- Écran de chargement -->
 <div id="loading-screen">
   <div id="loading-circle">
-  <div class="dot" style="--i: 0"></div>
-  <div class="dot" style="--i: 1"></div>
-  <div class="dot" style="--i: 2"></div>
-  <div class="dot" style="--i: 3"></div>
-  <div class="dot" style="--i: 4"></div>
-  <div class="dot" style="--i: 5"></div>
-  <div class="dot" style="--i: 6"></div>
-  <div class="dot" style="--i: 7"></div>
+    <img id="moonlab-logo" src="assets/MOONLAB.png" alt="MoonLab Logo" />
+    <div class="dot" style="--i: 0"></div>
+    <div class="dot" style="--i: 1"></div>
+    <div class="dot" style="--i: 2"></div>
+    <div class="dot" style="--i: 3"></div>
+    <div class="dot" style="--i: 4"></div>
+    <div class="dot" style="--i: 5"></div>
+    <div class="dot" style="--i: 6"></div>
+    <div class="dot" style="--i: 7"></div>
   </div>
   <div id="click-to-start" class="hidden">Appuyez pour continuer</div>
 </div>
@@ -47,9 +48,38 @@
   <div class="circle-item-container"><img class="circle-item" src="assets/item7.png" alt="Item 7" /></div>
   </div>
 </div>
+<div id="search-container" class="hidden">
+  <input type="text" id="search-input" placeholder="🔍 Rechercher un membre ou un rôle..." autocomplete="off">
+  <div id="suggestions" class="hidden"></div>
+</div>
+
 <div id="sin-page" class="hidden">
   <div id="sin-background"></div>
-  <div id="sin-message"></div>
+
+  <!-- Overlay pour le contenu par-dessus le fond -->
+  <div id="sin-overlay">
+    <!-- Section Pécheur -->
+    <!-- Section Souverain -->
+    <div id="pecheur-section" class="sin-section hidden">
+      <div id="pecheur-title" class="section-title">Pecheur</div>
+      <div id="sin-message"></div>
+    </div>
+
+
+    <!-- Section Disciples -->
+    <div id="apotre-section" class="sin-section hidden">
+      <div class="section-title">Apotres</div>
+      <div id="apotre-container"></div>
+    </div>
+    <!-- Section Membres -->
+    <div id="membres-section" class="sin-section hidden">
+      <div class="section-title">Membres</div>
+      <div id="membres-container"></div>
+    </div>
+
+  </div>
+</div>
+
 </div>
 <div id="modal" class="hidden">
   <div class="modal-content">
@@ -64,6 +94,16 @@
 </div>
 <div id="ancientmoon-bg" class="hidden">
   <video id="ancientmoon-video" src="assets/ancientmoon.mp4" autoplay muted loop playsinline></video>
+
+  <!-- Texte superposé -->
+  <div id="ancientmoon-overlay">
+    <p>
+      Depuis les temps anciens, huit lunes tournées autour de la Terre. Leurs éblouissantes éclats facinées et emerveillé les Hommes, bien que leurs pouvoirs de péchès les effrayés aussi. Le monde pouvait ressemblés a un monde stable où aucun homme ne pouvait succomber à son défaut dévorant. Certains remirent en cause le manque de liberté que cela procurérait bien que d'autre en montrer son avantage de paix.<br><br>
+      Lors de la grande destruction, les péchès ont afflué le sol et les guerres ont commencés. Le désastre emergé jusqu'a ce que les pècheurs reprirent le controle. Chacun posait ça loi, et la liberté des hommes pouvait être désormais séparé de son destin. L'Homme devint l'Homme au sens pur du terme libre de ses actions, conscient mais pouvant effectué ces péchès sous le regard de leurs représentant.<br><br>
+      Finalement même certains pécheurs s'allièrent pour subvenir au monde. Certaines guerre éclatat entre eux mais elles n'étaient pas aussi fortes et mortelles que sans commandement. Malgrès tout cela, la Colère et l'Orgueil ne cessèrent de rompre et ne trouvèrent aucun représentant stable. Peut être était-ce dans la nature de leurs péchès.<br><br>
+      La dernière lune subsite dans le ciel étoilé. Nul ne sait à quoi est-elle reliée. Peut être un autre péchè, peut être le péchè capital, ce qui est sur : c'est que son éclats ne cesse d'ermeveiller les hommes que se soit par sa beauté ou son histoire.
+    </p>
+  </div>
 </div>
 <div id="return-button" class="hidden">
   <span>⟵ Retour</span>

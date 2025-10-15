@@ -23,13 +23,16 @@ let currentIndex = 0;
 let canClick = false;
 let currentZoomTarget = null;
 let mainContentActive = false;
+let sinApotres = {};
+let sinMembres = {};
 
 const phrases = [
-    { text: "Depuis la nuit des temps, les pêcheurs étaient méprisés par leurs gestes et leurs actions.", symbol: "assets/symbol1.png" },
-    { text: "Pourtant, ils ne cessèrent de prier la lune pour que miséricorde leur soit accordée.", symbol: "assets/symbol2.png" },
-    { text: "Car eux seuls avaient compris l'essence même de l'humain.", symbol: "assets/symbol3.png" },
-    { text: "Ainsi, au fil des siècles ce sont les pêcheurs qui sont devenus sources de prières.", symbol: "assets/symbol4.png" },
-    { text: "Alors priez, priez pour la naissance des 7 pêcheurs et de leurs apôtres, car eux seuls seront votre voie.", symbol: "assets/symbol5.png" }
+    { text: "Lors de l'air des huit lunes, l'éclats de leurs volontés glorifiaient la paix et l'entente", symbol: "assets/symbol1.png" },
+    { text: "A un moment les tois lunes de La paresse, l'Envie et l'avarice se crachèrent et eclatèrent en mille morceaux", symbol: "assets/symbol2.png" },
+    { text: "Leurs derniers morceux furent ramassés par le CEO de la Gang Gang corporation, les pécheurs purent alors gérer plainement leurs sociétés", symbol: "assets/symbol3.png" },
+    { text: "L'implosion de la Luxure et de la Gourmandise fut témoins du mariage de deux futurs pécheurs, près à répendre leurs dévotions.", symbol: "assets/symbol4.png" },
+    { text: "L'Orgueil et la Colère disparaissent sans laissé trace, derrière laquelle beaucoup tentèrent en vain de les contrôler, les échos de wolfdefender et d'un pigeon se font encore entendre.", symbol: "assets/symbol5.png" },
+    { text: "Les apotres prient pour leurs pécheurs et la dernière lune veillent a la stabilités, les péchès n'estompent pas la paix mais rendent la liberté.", symbol: "assets/symbol6.png" }
 ];
 
 const sins = [
@@ -244,6 +247,7 @@ function showMainContent() {
     const annoncesContainer = document.getElementById("annonces-container");
     annoncesContainer.classList.remove("hidden");
     setTimeout(() => annoncesContainer.classList.add("visible"), 500);
+    showSearchBar();
     if (classementWidget) {
          classementWidget.classList.remove("hidden");
         // petit délai pour déclencher la transition CSS
@@ -291,7 +295,7 @@ let hasEnteredAncientMoon = false;
 centerMoon.addEventListener('click', () => {
     if (!mainContentActive || hasEnteredAncientMoon) return;
     hasEnteredAncientMoon = true;
-
+    hideSearchBar();
     // Sons
     souffle2Sound.currentTime = 0;
     souffle2Sound.play().catch(() => { });
@@ -366,12 +370,18 @@ centerMoon.addEventListener('click', () => {
         ancientMoon.classList.remove('hidden');
         ancientMoon.style.opacity = '1';
         ancientMoon.style.transform = 'scale(1)';
+
+        // 👉 Nouvelle animation du texte
+        const overlay = document.getElementById('ancientmoon-overlay');
+        setTimeout(() => overlay.classList.add('visible'), 1200);
+
         setTimeout(() => {
             returnButton.classList.remove('hidden', 'exit-zoom');
             returnButton.classList.add('visible');
             returnButton.style.transform = 'scale(1)';
         }, 1800);
     }, 1600);
+
 });
 
 document.querySelectorAll('.circle-item').forEach((item, index) => {
@@ -455,40 +465,123 @@ function enterSinPage(index) {
         visualizer.style.opacity = "0";
         visualizer.style.pointerEvents = "none"; // si vous ne voulez pas de clics
     }
-    if (representative && representative.name !== "aucun" && representative.name !== "Place vacante") {
-        // Insère une <img> : elle prendra sa hauteur réelle et poussera le scroll
-        sinBackground.innerHTML = `<img id="sin-bg-img" src="assets/${sin.title}.png" alt="${sin.title}" draggable="false">`;
-        sinBackground.style.backgroundColor = 'transparent';
-        sinMessage.style.pointerEvents = 'auto';
-        sinMessage.className = ''; // reset la classe
-        sinMessage.innerHTML = `
-            <div class="player-card">
-                <img src="${representative.avatar || "assets/default-avatar.png"}" alt="Avatar">
-                <div class="player-info">
-                    <div class="player-name">${representative.name}</div>
-                </div>
-            </div>
-        `;
+    
+    const pecheurSection = document.getElementById('pecheur-section');
 
-        // sécurité : désactive le drag et les events sur l'image
+hideSearchBar();
+sinMessage.innerHTML = "";
+sinMessage.removeAttribute("class"); // enlève toutes les classes
+sinMessage.removeAttribute("style"); // enlève styles inline
+pecheurSection.classList.add("hidden");
+
+// --- CAS AVEC REPRÉSENTANT ---
+if (representative && representative.name !== "aucun" && representative.name !== "Place vacante") {
+    pecheurSection.classList.remove("hidden");
+    document.getElementById("pecheur-title").style.display = "block";
+
+    // Important : enlever vacant si jamais défini avant
+    sinMessage.classList.remove("vacant");
+
+    sinMessage.innerHTML = `
+        <div class="player-card" onclick="openMemberProfile('${representative.name}')">
+            <img src="${representative.avatar}" alt="${representative.name}" />
+            <div class="player-info">
+                <div class="player-name">${representative.name}</div>
+            </div>
+        </div>
+    `;
+
+    sinBackground.innerHTML = `<img id="sin-bg-img" src="assets/${sin.title}.png" alt="${sin.title}" draggable="false">`;
+        sinBackground.style.backgroundColor = 'transparent';
         const bgImg = sinBackground.querySelector('img');
         if (bgImg) {
             bgImg.addEventListener('dragstart', e => e.preventDefault());
             bgImg.style.pointerEvents = 'none';
             bgImg.style.userSelect = 'none';
-            bgImg.style.display = 'block';
             bgImg.style.width = '100%';
             bgImg.style.height = 'auto';
         }
-    } else {
-        // Pas de représentant
-        sinBackground.innerHTML = '';
-        sinBackground.style.backgroundColor = 'black';
-        a = true;
-        sinMessage.className = 'vacant'; // ajoute la classe spéciale
-        sinMessage.style.pointerEvents = 'auto';
-        sinMessage.textContent = "La lune a cessé d’émettre depuis des millénaires, pourtant son éternel souverain ne s’est pas encore dévoilé.";
+    const elements = document.querySelectorAll(".section-title");
+    elements.forEach(el => {
+  el.style.marginTop = "0px";
+    });
+// --- CAS VACANT ---
+} else {
+    pecheurSection.classList.remove("hidden");
+    document.getElementById("pecheur-title").style.display = "none";
+
+    sinBackground.innerHTML = '';
+    sinBackground.style.backgroundColor = 'black';
+
+    // ✅ Réapplique bien le style vacant
+    sinMessage.classList.add("vacant");
+    sinMessage.textContent = "La lune a cessé d’émettre depuis des millénaires, pourtant son éternel souverain ne s’est pas encore dévoilé.";
+
+    const elements = document.querySelectorAll(".section-title");
+    elements.forEach(el => {
+  el.style.marginTop = "500px";
+    });
+}
+
+    // Charger les apôtres pour ce péché
+    const apotreSection = document.getElementById("apotre-section");
+    const apotreContainer = document.getElementById("apotre-container");
+    const apotreTitle = document.getElementById("apotre-title");
+
+    apotreContainer.innerHTML = ""; // reset
+    apotreSection.classList.add("hidden");
+
+    // Chercher la liste d'apôtres pour ce péché
+    const apotres = sinApotres[sin.title] || [];
+
+    // Si il y en a, on les affiche
+    if (apotres.length > 0) {
+        apotreSection.classList.remove("hidden");
+        apotres.forEach(a => {
+            const card = document.createElement("div");
+            card.className = "apotre-card";
+            card.setAttribute("onclick", `openMemberProfile('${a.name}')`);
+            card.innerHTML = `
+                <img src="${a.avatar || "assets/default-avatar.png"}" alt="Avatar">
+                <div class="apotre-name">${a.name}</div>
+            `;
+            apotreContainer.appendChild(card);
+            });
     }
+    // === SECTION MEMBRES ===
+    const membresSection = document.getElementById("membres-section");
+    const membresContainer = document.getElementById("membres-container");
+
+    // Reset
+    membresContainer.innerHTML = "";
+    membresSection.classList.add("hidden");
+
+    // Filtrage : Membres → qui ont CE péché → PAS apôtres → PAS pécheurs → PAS "Place vacante"
+    const membresFiltres = sinMembres.filter(m => {
+        return m.roles.includes(sin.title) &&
+            m.roles.includes("Membres") &&
+            !m.roles.includes("Apotre") &&
+            !m.roles.includes("Pécheurs") &&
+            m.name !== "Place vacante";
+    });
+
+    // Si au moins un membre trouvé → affichage
+    if (membresFiltres.length > 0) {
+        membresSection.classList.remove("hidden");
+
+        membresFiltres.forEach(a => {
+            const card = document.createElement("div");
+            card.className = "apotre-card";
+            card.setAttribute("onclick", `openMemberProfile('${a.name}')`);
+            card.innerHTML = `
+                <img src="${a.avatar}" alt="${a.name}">
+                <div class="apotre-name">${a.name}</div>
+            `;
+            membresContainer.appendChild(card);
+        });
+    }
+
+
 
     // Empêche le scroll du body (on scrollera à l'intérieur de #sin-page)
     document.body.classList.add('no-scroll');
@@ -513,8 +606,8 @@ function enterSinPage(index) {
 const centerMoonTooltip = document.createElement('div');
 centerMoonTooltip.className = 'sin-tooltip';
 centerMoonTooltip.innerHTML = `
-  <strong>Lune Centrale</strong><br>
-  La dernière lune subsiste depuis des millénaires,<br>
+  <strong>Moon</strong><br>
+  La dernière lune subsiste depuis des millénaires,
   vénérée et acclamée à chaque coucher du Soleil.
 `;
 document.body.appendChild(centerMoonTooltip);
@@ -650,6 +743,7 @@ returnButton.addEventListener('click', () => {
              }, 600);
         }
         const visualizer = document.getElementById("audio-visualizer");
+        showSearchBar();
 visualizer.classList.remove("hidden");
 
 setTimeout(() => {
@@ -740,6 +834,21 @@ function loadAnnonces() {
         })
         .catch(err => console.error("Erreur API annonces :", err));
 }
+
+fetch("https://siteapi-2.onrender.com/apotres")
+    .then(res => res.json())
+    .then(data => {
+        sinApotres = data.apotres || {};
+    })
+    .catch(err => console.error("Erreur API apôtres :", err));
+
+fetch("https://siteapi-2.onrender.com/membres")
+  .then(res => res.json())
+  .then(data => {
+      sinMembres = data.membres || [];
+  })
+  .catch(err => console.error("Erreur API membres :", err));
+
 // Classement
 async function loadClassement() {
   try {
@@ -856,6 +965,163 @@ document.getElementById("btn-classement-peches").addEventListener("click", () =>
   document.querySelectorAll("#classement-page .flex button").forEach(btn => btn.classList.remove("active"));
   document.getElementById("btn-classement-peches").classList.add("active");
 });
+
+// === HOVER CARD POUR LES MEMBRES ===
+const hoverCard = document.createElement("div");
+hoverCard.className = "member-hover-card";
+document.body.appendChild(hoverCard);
+
+function showMemberCard(member, x, y) {
+  if (!member) return;
+
+  const rolesList = [...member.roles] // copie pour ne pas modifier l’original
+  .reverse()                        // 🔁 inverse l’ordre
+  .map(r => `<div class="role">${r}</div>`)
+  .join("");
+
+  hoverCard.innerHTML = `
+    <div class="member-hover-top">
+      <img src="${member.avatar}" alt="${member.name}">
+      <div class="member-info">
+        <div class="name">${member.name}</div>
+        <div class="realname">${member.realname || ""}</div>
+      </div>
+    </div>
+    <div class="roles">${rolesList}</div>
+  `;
+
+  hoverCard.style.left = `${x + 20}px`;
+  hoverCard.style.top = `${y}px`;
+  hoverCard.classList.add("visible");
+}
+
+function moveMemberCard(x, y) {
+  hoverCard.style.left = `${x + 20}px`;
+  hoverCard.style.top = `${y}px`;
+}
+
+function hideMemberCard() {
+  hoverCard.classList.remove("visible");
+}
+
+// 🔥 Active la carte sur tous les membres et apôtres dynamiques
+document.addEventListener("mouseover", (e) => {
+  const card = e.target.closest(".apotre-card, .player-card");
+  if (!card) return;
+
+  const nameEl = card.querySelector(".apotre-name, .player-name");
+  if (!nameEl) return;
+
+  const member = sinMembres.find(m => m.name === nameEl.textContent.trim());
+  if (member) showMemberCard(member, e.pageX, e.pageY);
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (hoverCard.classList.contains("visible")) moveMemberCard(e.pageX, e.pageY);
+});
+
+document.addEventListener("mouseout", (e) => {
+  if (e.relatedTarget && hoverCard.contains(e.relatedTarget)) return;
+  hideMemberCard();
+});
+
+
+
+const searchContainer = document.getElementById("search-container");
+const searchInput = document.getElementById("search-input");
+const suggestionsBox = document.getElementById("suggestions");
+
+function showSearchBar() {
+  searchContainer.classList.remove("hidden");
+  setTimeout(() => {
+    searchContainer.classList.add("visible");
+  }, 600);
+}
+
+function hideSearchBar() {
+  searchContainer.classList.remove("visible");
+  setTimeout(() => {
+    searchContainer.classList.add("hidden");
+  }, 800);
+}
+
+// 🟡 Fonction utilitaire pour mettre en surbrillance le texte saisi
+function highlightMatch(text, query) {
+  if (!text || !query) return text;
+  const regex = new RegExp(`(${query})`, "gi");
+  return text.replace(regex, `<span class="highlight">$1</span>`);
+}
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.trim().toLowerCase();
+  if (query.length < 2) {
+    suggestionsBox.classList.add("hidden");
+    return;
+  }
+
+  const results = sinMembres.filter(m =>
+    m.name.toLowerCase().includes(query) ||
+    (m.realname && m.realname.toLowerCase().includes(query)) ||
+    (m.roles && m.roles.some(r => r.toLowerCase().includes(query)))
+  );
+
+  if (results.length === 0) {
+    suggestionsBox.innerHTML = `<div class="suggestion-item">Aucun résultat</div>`;
+  } else {
+    suggestionsBox.innerHTML = results
+      .map(m => {
+        const highlightedName = highlightMatch(m.name, query);
+        const highlightedRealname = highlightMatch(m.realname || "", query);
+        const highlightedRoles = (m.roles || [])
+        .slice() // copie pour ne pas modifier le tableau original
+        .reverse()
+        .map(r => `<div class="suggestion-role">${highlightMatch(r, query)}</div>`)
+        .join("");
+        
+        return `
+          <div class="suggestion-item" data-name="${m.name}" onclick="window.open('membre.html?n=${encodeURIComponent(m.name)}', '_blank')">
+            <div class="suggestion-header">
+              <img class="suggestion-avatar" src="${m.avatar}" alt="avatar">
+              <div>
+                <div class="suggestion-name">${highlightedName}</div>
+                <div class="suggestion-realname">${highlightedRealname}</div>
+              </div>
+            </div>
+            <div class="suggestion-roles">
+              ${highlightedRoles}
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  suggestionsBox.classList.remove("hidden");
+});
+
+// 🖱 Clique sur un résultat
+suggestionsBox.addEventListener("click", (e) => {
+  const item = e.target.closest(".suggestion-item");
+  if (!item) return;
+  const name = item.getAttribute("data-name");
+  searchInput.value = name;
+  suggestionsBox.classList.add("hidden");
+
+  const member = sinMembres.find(m => m.name === name);
+  if (member) showMemberCard(member, window.innerWidth / 2 - 140, window.innerHeight / 2 - 100);
+});
+
+document.addEventListener("click", (e) => {
+  if (!searchContainer.contains(e.target)) {
+    suggestionsBox.classList.add("hidden");
+  }
+});
+
+function openMemberProfile(realname) {
+  if (!realname) return;
+  window.open(`membre.html?n=${encodeURIComponent(realname)}`, "_blank");
+}
+
 
 
 // Charger les annonces après affichage du contenu principal
