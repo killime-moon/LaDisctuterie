@@ -707,8 +707,10 @@ returnButton.addEventListener('click', () => {
         // Discord
         if (discord) {
             discord.classList.add('visible');
-            discord.style.opacity = '0.9';
-            discord.style.pointerEvents = 'auto';
+            setTimeout(() => {
+                discord.style.opacity = '0.9';
+                discord.style.pointerEvents = 'auto';
+            }, 600);
         }
 
         // Footer
@@ -1199,6 +1201,7 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
+
 
 
 
