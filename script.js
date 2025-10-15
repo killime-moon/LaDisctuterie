@@ -335,7 +335,7 @@ centerMoon.addEventListener('click', () => {
     centerMoonTooltip.style.display = 'none';
     // Masquer Discord et footer proprement
     if (discord) {
-        discord.style.transition = 'opacity 2.5s ease';
+        discord.style.transition = 'opacity 1s ease';
         discord.style.opacity = '0';
         discord.style.pointerEvents = 'none';
     }
@@ -1201,6 +1201,7 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
+
 
 
 
