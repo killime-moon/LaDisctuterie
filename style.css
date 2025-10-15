@@ -221,7 +221,7 @@ body, html {
   right: 10px;
   z-index: 10;
   opacity: 0;
-  transition: opacity 5.5s ease;
+  transition: opacity 2.5s ease;
   pointer-events: none;
   transform: scale(0.85);
   filter: brightness(0.85);
@@ -1234,4 +1234,5 @@ body, html {
     transform: rotate(calc(45deg * var(--i))) translate(30vw);
   }
 }
+
 
