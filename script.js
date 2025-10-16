@@ -87,7 +87,7 @@ function fadeIn(element, duration = 1000, targetOpacity = 0.9) {
 async function showPhrase(index, isFirst = false) {
     canClick = false;
     phraseDiv.classList.remove('clickable');
-    symbolImg = NULL;
+
     if (!isFirst) {
         // fade-out des anciens texte et symbole
         phraseDiv.style.transition = 'opacity 1000ms ease';
@@ -98,11 +98,20 @@ async function showPhrase(index, isFirst = false) {
         await new Promise(r => setTimeout(r, 1000)); // attend la fin du fade-out
     }
 
-    // Met le texte et symbole nouveaux
-    phraseDiv.textContent = phrases[index].text;
-    symbolImg.src = phrases[index].symbol;
+    // Précharge la nouvelle image AVANT de l'afficher
+    const newSymbolSrc = phrases[index].symbol;
+    await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = newSymbolSrc;
+        img.onload = resolve;
+        img.onerror = reject;
+    });
 
-    // Assure qu'ils commencent invisibles
+    // Met à jour le texte et l'image (maintenant que l'image est prête)
+    phraseDiv.textContent = phrases[index].text;
+    symbolImg.src = newSymbolSrc;
+
+    // Commence invisibles
     phraseDiv.style.opacity = 0;
     symbolImg.style.opacity = 0;
 
@@ -115,8 +124,9 @@ async function showPhrase(index, isFirst = false) {
     phraseDiv.classList.add('clickable');
 
     // fade-in avec durées originales
-    phraseDiv.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
-    symbolImg.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
+    const fadeDuration = isFirst ? 4000 : 3000;
+    phraseDiv.style.transition = `opacity ${fadeDuration}ms ease`;
+    symbolImg.style.transition = `opacity ${fadeDuration}ms ease`;
     phraseDiv.style.opacity = 0.9;
     symbolImg.style.opacity = 0.9;
 }
@@ -1201,6 +1211,7 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
+
 
 
 
