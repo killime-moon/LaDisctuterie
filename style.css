@@ -1226,7 +1226,12 @@ body, html {
 /* === RESPONSIVE MOBILE & TABLETTE (remplacer l'ancienne media query) === */
 @media (max-width: 1025px) {
 
-  #audio-visualizer {display: none;}
+  #audio-visualizer {
+    display: none;
+  }
+  #audio-visualizer.visible {
+    display: none;
+  }
   /* Ne pas imposer display:flex au document — casse le background */
   html, body {
     overflow: auto !important; /* permet le scroll */
@@ -1373,7 +1378,7 @@ body, html {
     line-height: 1.45 !important;
   }
   #ancientmoon-overlay p{
-    font-size: 1.0rem;
+    font-size: 0.9rem;
   }
 
   /* SIN PAGE : s'assurer qu'elle scrolle correctement */
