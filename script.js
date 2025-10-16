@@ -28,7 +28,7 @@ let sinMembres = {};
 
 const phrases = [
     { text: "Lors de l'air des huit lunes, l'éclats de leurs volontés glorifiaient la paix et l'entente", symbol: "assets/symbol1.png" },
-    { text: "A un moment les tois lunes de La paresse, l'Envie et l'avarice se crachèrent et eclatèrent en mille morceaux", symbol: "assets/symbol2.png" },
+    { text: "En un instant, les trois lunes de La paresse, l'Envie et l'avarice se crachèrent et eclatèrent en mille morceaux", symbol: "assets/symbol2.png" },
     { text: "Leurs derniers morceux furent ramassés par le CEO de la Gang Gang corporation, les pécheurs purent alors gérer plainement leurs sociétés", symbol: "assets/symbol3.png" },
     { text: "L'implosion de la Luxure et de la Gourmandise fut témoins du mariage de deux futurs pécheurs, près à répendre leurs dévotions.", symbol: "assets/symbol4.png" },
     { text: "L'Orgueil et la Colère disparaissent sans laissé trace, derrière laquelle beaucoup tentèrent en vain de les contrôler, les échos de wolfdefender et d'un pigeon se font encore entendre.", symbol: "assets/symbol5.png" },
@@ -1253,5 +1253,6 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
+
 
 
