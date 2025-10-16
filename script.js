@@ -87,7 +87,7 @@ function fadeIn(element, duration = 1000, targetOpacity = 0.9) {
 async function showPhrase(index, isFirst = false) {
     canClick = false;
     phraseDiv.classList.remove('clickable');
-
+    symbolImg = NULL;
     if (!isFirst) {
         // fade-out des anciens texte et symbole
         phraseDiv.style.transition = 'opacity 1000ms ease';
@@ -1201,6 +1201,7 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
+
 
 
 
