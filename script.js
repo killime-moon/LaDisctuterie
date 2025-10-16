@@ -98,20 +98,11 @@ async function showPhrase(index, isFirst = false) {
         await new Promise(r => setTimeout(r, 1000)); // attend la fin du fade-out
     }
 
-    // Précharge la nouvelle image AVANT de l'afficher
-    const newSymbolSrc = phrases[index].symbol;
-    await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = newSymbolSrc;
-        img.onload = resolve;
-        img.onerror = reject;
-    });
-
-    // Met à jour le texte et l'image (maintenant que l'image est prête)
+    // Met le texte et symbole nouveaux
     phraseDiv.textContent = phrases[index].text;
-    symbolImg.src = newSymbolSrc;
+    symbolImg.src = phrases[index].symbol;
 
-    // Commence invisibles
+    // Assure qu'ils commencent invisibles
     phraseDiv.style.opacity = 0;
     symbolImg.style.opacity = 0;
 
@@ -124,9 +115,8 @@ async function showPhrase(index, isFirst = false) {
     phraseDiv.classList.add('clickable');
 
     // fade-in avec durées originales
-    const fadeDuration = isFirst ? 4000 : 3000;
-    phraseDiv.style.transition = `opacity ${fadeDuration}ms ease`;
-    symbolImg.style.transition = `opacity ${fadeDuration}ms ease`;
+    phraseDiv.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
+    symbolImg.style.transition = `opacity ${isFirst ? 4000 : 3000}ms ease`;
     phraseDiv.style.opacity = 0.9;
     symbolImg.style.opacity = 0.9;
 }
@@ -143,7 +133,7 @@ function showFinalState() {
     setTimeout(() => {
         passButton.classList.remove('visible');
     }, 600);
-
+    phraseDiv.style.pointerEvents= 'none';
     overlay.style.transition = 'opacity 2s ease';
     overlay.style.opacity = 0;
 
@@ -195,14 +185,23 @@ function positionCircleItemsStatic() {
     const radius = 280;
     const centerX = container.offsetWidth / 2;
     const centerY = container.offsetHeight / 2;
+    const totalItems = items.length;
+
+    if (window.innerWidth <= 1025) {
+        items.forEach((item, index) => {
+
+        });
+    }else{
 
     items.forEach((item, index) => {
-        const angle = (index / items.length) * (2 * Math.PI) - Math.PI / 2;
+        const angle = (index / totalItems) * (2 * Math.PI) + rotationAngle;
         const x = centerX + radius * Math.cos(angle) - item.offsetWidth / 2;
         const y = centerY + radius * Math.sin(angle) - item.offsetHeight / 2;
+
         item.style.left = `${x}px`;
         item.style.top = `${y}px`;
     });
+    }   
 }
 
 let rotationAngle = 0;
@@ -216,6 +215,8 @@ function rotateCircleItems() {
     const totalItems = items.length;
 
     rotationAngle += 0.0015; // ⚠️ Plus lent que 0.002
+    if (window.innerWidth <= 1025) {
+    }else{
 
     items.forEach((item, index) => {
         const angle = (index / totalItems) * (2 * Math.PI) + rotationAngle;
@@ -227,6 +228,7 @@ function rotateCircleItems() {
     });
 
     requestAnimationFrame(rotateCircleItems);
+    }   
 }
 
 function showMainContent() {
@@ -332,7 +334,11 @@ centerMoon.addEventListener('click', () => {
     main.style.pointerEvents = 'none';
 
     mainContent.style.transition = 'transform 1.5s ease, opacity 1.5s ease';
+    if (window.innerWidth >= 1025) {
     mainContent.style.transform = 'translate(-50%, -50%) scale(0.1)';
+    }else{
+        mainContent.style.transform = 'scale(0.1)';
+    }
     mainContent.style.opacity = '0';
     mainContent.style.pointerEvents = 'none';
     centerMoon.style.pointerEvents = 'none';
@@ -431,7 +437,11 @@ function enterSinPage(index) {
     main.style.pointerEvents = 'none';
 
     mainContent.style.transition = 'transform 1.5s ease, opacity 1.5s ease';
+    if (window.innerWidth >= 1025) {
     mainContent.style.transform = 'translate(-50%, -50%) scale(0.1)';
+    }else{
+        mainContent.style.transform = 'scale(0.1)';
+    }
     mainContent.style.opacity = '0';
     mainContent.style.pointerEvents = 'none';
 
@@ -440,7 +450,7 @@ function enterSinPage(index) {
     circleItems.forEach(item => item.style.pointerEvents = 'none');
 
     if (discord) {
-        discord.style.transition = 'opacity 2.5s ease';
+        discord.style.transition = 'opacity 1s ease';
         discord.style.opacity = '0';
         discord.style.pointerEvents = 'none';
     }
@@ -697,7 +707,11 @@ returnButton.addEventListener('click', () => {
         mainContent.classList.remove('hidden');
         mainContent.classList.add('visible');
         mainContent.style.opacity = '1';
+        if (window.innerWidth >= 1025) {
         mainContent.style.transform = 'translate(-50%, -50%) scale(1)';
+        }else{
+            mainContent.style.transform = 'scale(1)';
+        }
         mainContent.style.pointerEvents = 'auto';
 
         // Lune centrale
@@ -717,10 +731,8 @@ returnButton.addEventListener('click', () => {
         // Discord
         if (discord) {
             discord.classList.add('visible');
-            setTimeout(() => {
-                discord.style.opacity = '0.9';
-                discord.style.pointerEvents = 'auto';
-            }, 600);
+            discord.style.opacity = '0.9';
+            discord.style.pointerEvents = 'auto';
         }
 
         // Footer
@@ -1211,10 +1223,5 @@ document.body.addEventListener("click", () => {
     initAudioVisualizer();
     draw();
 });
-
-
-
-
-
 
 

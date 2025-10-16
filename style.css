@@ -1221,17 +1221,161 @@ body, html {
   to { opacity: 1; transform: scale(1); }
 }
 
-@media (max-width: 1200px) {
+/* === RESPONSIVE MOBILE & TABLETTE (remplacer l'ancienne media query) === */
+@media (max-width: 1025px) {
+
+  /* Ne pas imposer display:flex au document — casse le background */
+  html, body {
+    overflow: auto !important; /* permet le scroll */
+    /* removed display:flex; flex-direction: column; */
+    height: auto;
+    min-height: 100%;
+  }
+
+  /* Ajuste le main (fond étoilé) sans casser sa position fixed */
+  #main {
+    background-position: center top;
+  }
+
+  /* Loading screen ajusté */
   #moonlab-logo {
     width: 70vw;
     height: auto;
+    max-width: 420px;
   }
   #loading-circle {
     width: 70vw;
     height: 70vw;
+    max-width: 420px;
+    max-height: 420px;
+    margin-bottom: 20px;
   }
   #loading-circle .dot {
-    transform: rotate(calc(45deg * var(--i))) translate(30vw);
+    /* utiliser vw pour rayon adaptatif */
+    transform: rotate(calc(45deg * var(--i))) translate(calc(35vw));
+  }
+
+  /* Cercle central : occupe la largeur mobile mais reste centré */
+  #main-content {
+    position: relative; /* pour qu'il suive le flux mobile */
+    top: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    height: auto;
+    padding: 40px 0 20px 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    z-index: 50;
+  }
+
+  /* container réduit - items disposeront par JS */
+  #circle-container {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    max-width: 90%;
+   height: 170px;
+    margin-top: 50px;
+    margin-right:140px;
+    justify-content: center;
+  }
+  #circle-container div{
+    margin-left: 80px;
+  max-height: 10%; 
+ }
+
+  .circle-item {
+    width: min(16vw, 84px) !important;
+    height: min(16vw, 84px) !important;
+    transition: transform 0.18s ease;
+  }
+
+  #center-moon {
+    width: min(22vw, 120px) !important;
+    height: auto !important;
+    max-width: 140px;
+    margin-top: 130px;
+  }
+  #center-image {
+    display: none;
+  }
+  /* Barre de recherche : centrée, large et accessible */
+  #search-container {
+    width: 92vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: 12px !important;
+    padding: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    z-index: 9999;
+  }
+
+  /* Discord widget : réduit et non intrusif */
+  #discord-widget-container {
+    transform: scale(0.5);
+    z-index: 1001;
+            margin-right: -100px;
+        margin-bottom: -100px;
+  }
+
+  /* Annonces et Classement : enlever le fixed pour qu'ils s'empilent */
+  #annonces-container,
+  #classement-widget {
+    position: relative !important;
+    width: 94% !important;
+    max-height: 46vh !important;
+    margin: 70px auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 1000;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+
+  #annonces-list, #classement-container {
+    max-height: 40vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Phrase intro plus lisible */
+  #phrase {
+    font-size: 1.15rem !important;
+    max-width: 92vw !important;
+    padding: 10px;
+  }
+
+  /* Tooltips plus petites */
+  .sin-tooltip {
+    font-size: 0.78rem !important;
+    padding: 6px 8px !important;
+    max-width: 180px !important;
+  }
+
+  /* Ancient moon overlay récentré + largeur mobile */
+  #ancientmoon-overlay {
+    width: 92% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    top: 50% !important;
+    padding: 12px !important;
+    line-height: 1.45 !important;
+  }
+  #ancientmoon-overlay p{
+    font-size: 1.0rem;
+  }
+
+  /* SIN PAGE : s'assurer qu'elle scrolle correctement */
+  #sin-page {
+    min-height: auto;
+    overflow-y: auto !important;
   }
 }
 
