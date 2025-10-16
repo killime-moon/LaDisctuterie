@@ -656,10 +656,12 @@ body, html {
   z-index: 200;
   opacity: 0;
   transition: opacity 2.5s ease;
+  pointer-events: none;
 }
 
 #annonces-container.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 #annonces-list {
@@ -1298,7 +1300,7 @@ body, html {
     width: min(22vw, 120px) !important;
     height: auto !important;
     max-width: 140px;
-    margin-top: 130px;
+    margin-top: 150px;
   }
   #center-image {
     display: none;
@@ -1335,7 +1337,7 @@ body, html {
     padding: 10px;
     border-radius: 10px;
     z-index: 1000;
-    pointer-events: auto;
+    pointer-events: none;
     overflow: hidden;
   }
 
@@ -1343,6 +1345,7 @@ body, html {
     max-height: 40vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    pointer-events: none;
   }
 
   /* Phrase intro plus lisible */
