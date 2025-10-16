@@ -1226,6 +1226,7 @@ body, html {
 /* === RESPONSIVE MOBILE & TABLETTE (remplacer l'ancienne media query) === */
 @media (max-width: 1025px) {
 
+  #audio-visualizer {display: none;}
   /* Ne pas imposer display:flex au document — casse le background */
   html, body {
     overflow: auto !important; /* permet le scroll */
