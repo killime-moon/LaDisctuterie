@@ -51,6 +51,20 @@ function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
+// === PRÉCHARGEMENT DES IMAGES ===
+function preloadImages(imageUrls) {
+  return Promise.all(
+    imageUrls.map(url => {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = resolve; // on ignore les erreurs
+        img.src = url;
+      });
+    })
+  );
+}
+
 function simulateLoading() {
     const dots = document.querySelectorAll('#loading-circle .dot');
     let index = 0;
@@ -266,7 +280,13 @@ function showMainContent() {
          setTimeout(() => classementWidget.classList.add("visible"), 500);
     }
     const visualizer = document.getElementById("audio-visualizer");
-    setTimeout(() => visualizer.classList.add("visible"), 500);
+
+    // ✅ on ne l'affiche que sur écran > 1025px
+    if (window.innerWidth >= 1025) {
+     setTimeout(() => visualizer.classList.add("visible"), 500);
+    } else {
+     visualizer.style.display = "none";
+    }
     items.forEach((item, i) => {
         item.style.opacity = '0';
         item.style.transition = 'opacity 2500ms ease';
@@ -1151,9 +1171,19 @@ function openMemberProfile(realname) {
 // Charger les annonces après affichage du contenu principal
 setTimeout(() => { loadAnnonces(); loadClassement(); }, 6000);
 
-animateParallax();
-simulateLoading();
-rotateCircleItems();
+// === Lancement différé après préchargement ===
+(async () => {
+  const imageUrls = phrases.map(p => p.symbol);
+
+  // On attend le chargement complet des images avant d'afficher les points
+  await preloadImages(imageUrls);
+
+  // Une fois tout chargé → on lance les animations et dots
+  animateParallax();
+  simulateLoading();
+  rotateCircleItems();
+})();
+
 
 
 
